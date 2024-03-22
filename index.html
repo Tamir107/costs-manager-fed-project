@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Costs Manager</title>
+    <script src="idb.js"></script>
+</head>
+
+<body>
+    <script>
+        async function test() {
+            try {
+                const result = await idb.openCostsDB("testing", 111);
+                console.log("OK: " + result);
+            }
+            catch (e) {
+                console.log("Error: " + e);
+            }
+        }
+        test();
+    </script>
+</body>
+
+</html>
