@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-function CostForm({ db = {} }) {
+function CostForm({ db = {}, setCostRows }) {
 
     const [sum, setSum] = useState(0);
     const [category, setCategory] = useState("");
@@ -10,6 +10,8 @@ function CostForm({ db = {} }) {
         try {
             const costItem = { "sum": sum, "category": category, "description": description };
             await db.addCost(costItem);
+            const costRows = await db.getCosts();
+            setCostRows(costRows);
         }
         catch (e) {
             console.error("Error adding cost:", e);
