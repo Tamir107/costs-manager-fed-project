@@ -17,19 +17,22 @@ idb.openCostsDB = function (dbName, versionNumber) {
             idb.db = event.target.result;
             const objectStore = idb.db.createObjectStore("costs", { keyPath: "id", autoIncrement: true });
 
-            objectStore.createIndex("sum", "sum", { unique: false });
-            objectStore.createIndex("category", "category", { unique: false });
-            objectStore.createIndex("description", "description", { unique: false });
+            objectStore.createIndex("month_and_year", ["year","month"], { unique: false });
 
         }
 
     });
 };
 
-idb.addCost = function addCost(costItem) {
+idb.addCost = function(costItem) {
     return new Promise((resolve, reject) => {
         const tx = idb.db.transaction(["costs"], "readwrite");
         const store = tx.objectStore("costs");
+
+        const date = new Date();
+        costItem.day = date.getDate();
+        costItem.month = date.getMonth() + 1;
+        costItem.year = date.getFullYear();
 
         store.add(costItem);
 
@@ -39,6 +42,10 @@ idb.addCost = function addCost(costItem) {
             reject(`error storing note ${event.target.errorCode}`);
         }
     });
+}
+
+idb.getCosts = function() {
+
 }
 
 export default idb;
