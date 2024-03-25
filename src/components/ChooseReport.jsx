@@ -1,140 +1,61 @@
-// import React, { useState } from 'react';
-// import DatePicker from 'react-datepicker';
-// import 'react-datepicker/dist/react-datepicker.css';
-
-// function ChooseReport({ db = {}, setCostRows }) {
-//     const [selectedDate, setSelectedDate] = useState(new Date());
-//     const maxAllowedDate = new Date(); // Set max allowed date to today
-
-//     const handleMonthly = async () => {
-//         try {
-//             const month = selectedDate.getMonth() + 1; // Month is zero-based, so we add 1
-//             const year = selectedDate.getFullYear();
-
-//             console.log("year is:" + year);
-//             console.log("month is:" + month);
-
-//             const costsData = await db.getCosts(month, year);
-
-//             setCostRows(costsData);
-//         } catch (error) {
-//             console.error('Error reading data:', error); // Log any errors to the console
-//         }
-
-
-
-//         // Handle Monthly Report
-//         console.log('Monthly Report for:', selectedDate);
-//     };
-
-//     const handleYearly = async () => {
-
-//         try {
-//             const year = selectedDate.getFullYear();
-//             console.log("year is:" + year);
-
-//             const costsData = await db.getCosts(null, year);
-
-//             setCostRows(costsData);
-//         } catch (error) {
-//             console.error('Error reading data:', error); // Log any errors to the console
-//         }
-
-//         // Handle Yearly Report
-//         console.log('Yearly Report for:', selectedDate);
-//     };
-
-//     return (
-//         <div>
-//             <h1>Report Component</h1>
-//             <DatePicker
-//                 selected={selectedDate}
-//                 onChange={(date) => setSelectedDate(date)}
-//                 dateFormat="MM/yyyy" // Set the date format to show only month and year
-//                 showMonthYearPicker // Show only month and year picker
-//                 maxDate={maxAllowedDate} // Set the max allowed date to today
-//             />
-//             <br />
-//             <button onClick={handleMonthly}>Monthly Report</button>
-//             <button onClick={handleYearly}>Yearly Report</button>
-//         </div>
-//     );
-// };
-
-
-// export default ChooseReport;
-
-
-//##############################
-
-// ChooseReport.jsx
-import React, { useState } from 'react';
-import { Button, Typography } from '@mui/material';
+// Developers: Tamir Razon 207421322, Daniel Korkus 314629692   
+import React from 'react';
+import { Button } from '@mui/material';
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
 function ChooseReport({ db = {}, setCostRows, selectedDate, setSelectedDate }) {
 
+    // Function to handle generation of monthly report
     const handleMonthly = async () => {
         try {
-            // const month = selectedDate.getMonth() + 1; // Month is zero-based, so we add 1
-            // const year = selectedDate.getFullYear();
+            const date = dayjs.unix(selectedDate / 1000); // Convert selectedDate to Day.js object
+            const month = date.month() + 1;// Extract month from the date
+            const year = date.year();// Extract year from the date
 
-            const FullDate = dayjs.unix(selectedDate / 1000); // dividing by 1000 to convert milliseconds to seconds
-            // Extract the month and year
-            const month = FullDate.month() + 1; // dayjs months are zero-based, so we add 1 to get the correct month
-            const year = FullDate.year(); // extracting the last two digits of the year
-
+            // Log year and month to console
             console.log("year is:" + year);
             console.log("month is:" + month);
 
+            // Fetch costs data for the specified month and year from the database
             const costsData = await db.getCosts(month, year);
-            console.log(costsData);
+            // Update cost rows with the fetched data
             setCostRows(costsData);
         } catch (error) {
-            console.error('Error reading data:', error); // Log any errors to the console
+            console.error("Error occurred while reading the data: ", error); // Log any errors that occur
         }
-
-        console.log('Monthly Report for:', selectedDate);
     };
 
+    // Function to handle generation of yearly report
     const handleYearly = async () => {
         try {
-            // const year = selectedDate.getFullYear();
-            // console.log("year is:" + year);
+            const date = dayjs.unix(selectedDate / 1000); // Convert selectedDate to Day.js object
+            const year = date.year(); // Extract year from the date
 
-            const FullDate = dayjs.unix(selectedDate / 1000); // dividing by 1000 to convert milliseconds to seconds
-            // Extract the year
-            const year = FullDate.year(); // extracting the last two digits of the year
-
+            // Fetch costs data for the specified year from the database
             const costsData = await db.getCosts(null, year);
-
+            // Update cost rows with the fetched data
             setCostRows(costsData);
         } catch (error) {
-            console.error('Error reading data:', error); // Log any errors to the console
+            console.error("Error occurred while reading the data: ", error); // Log any errors that occur
         }
-
-        console.log('Yearly Report for:', selectedDate);
     };
 
     return (
         <div className="section">
-            {/* <Typography variant="h1">Report Component</Typography> */}
             <div id="container-date">
+                {/* Date picker component */}
                 <DatePicker
-                    // value={selectedDate}
-                    // onChange={(newValue) => setSelectedDate(newValue)}
-                    // // renderInput={(params) => <TextField {...params} />}
-                    // views={['year', 'month']}
-                    // maxDate={maxAllowedDate}
-                    sx={{ width: "35%" }} // Apply inline styles for width
-                    slotProps={{ textField: { size: "small" } }} // Set properties for the input field
+                    sx={{ width: "25%" }} // Apply inline styles for width
+                    slotProps={{ textField: { size: "normal" } }} // Set properties for the input field
                     views={["month", "year"]} // Limit the DatePicker view to months and years only
-                    value={selectedDate} // Bind the value to the selectedYear state
-                    onChange={date => setSelectedDate(date)}// Set state when selected date
+                    value={selectedDate} // Bind the value to the selectedDate state
+                    onChange={date => setSelectedDate(date)} // Set state when selected date
                     disableFuture // Disable selection of future dates
                 />
+                {/* Button to trigger generation of monthly report */}
                 <Button variant="contained" onClick={handleMonthly}>Monthly Report</Button>
+                {/* Button to trigger generation of yearly report */}
                 <Button variant="contained" onClick={handleYearly}>Yearly Report</Button>
             </div>
         </div>
